@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - /home/pi/OI4/mosquitto/conf:/mosquitto/conf
+      - /home/pi/OI4/mosquitto/data:/mosquitto/data
+      - /home/pi/OI4/mosquitto/log:/mosquitto/log
+  
+  node-red:
+    image: nodered/node-red:3.0.2
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Amsterdam
+    ports:
+      - "1880:1880"
+    volumes:
+      - node-red-data:/data
+      
+  oi4-oec-registry:
+    image: oi4/oi4-oec-registry:dev
+    ports:
+      - "5798:5798"
+  
+volumes:
+  node-red-data:
+  mosquitto-conf:
+  mosquitto-data:
+  mosquitto-logs:
+ 
+
