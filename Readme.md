@@ -115,6 +115,15 @@ After saving the editor, restart the container, e.g. using the *Portainer* ui.
 
 ### Setup node-red flow
 
+To setup the example flow for node-red, get the flow from the [demo repository](https://github.com/OI4/oi4-oec-demo) by accessing *packages/oi4-oec-node-red-demo/src/* and copying the contents of the *flows.json* file. In the ui of the node-red instance on your developement target (port 1880) use
 
+> ctrl + i
+
+to open the import prompt and paste the contents of the *flows.json* file. Click
+
+> Import
+
+to load the flow into your node-red instance.
 
 ### Send data via the message bus
+
