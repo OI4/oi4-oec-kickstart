@@ -8,9 +8,9 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - /home/pi/OI4/mosquitto/conf:/mosquitto/conf
-      - /home/pi/OI4/mosquitto/data:/mosquitto/data
-      - /home/pi/OI4/mosquitto/log:/mosquitto/log
+      - mosquitto-conf:/mosquitto/config
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-logs:/mosquitto/log
   
   node-red:
     image: nodered/node-red:3.0.2

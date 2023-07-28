@@ -73,25 +73,13 @@ Currently, the oi4-oec registry images on the github container registry are **on
 
 If your **development target uses something else**, e.g. ARM 32Bit (most likely **armv7**) or 64Bit (**arm64**), you can use the following instructions to build the image yourself.
 
-First, you have to decide where to build the image, this is possible on your development pc or the development target itself. Be aware, that building in the target can lead to much longer building times.
+First, you have to decide where to build the image, it is possible  to build on your development pc or the development target itself. Be aware, that building on the target can lead to much longer building times.
 
 - Use your PAT to pull the latest version of the [oi4-oec-registry repository](https://github.com/OI4/oi4-oec-registry/).
 - install [nodejs](https://nodejs.org/en) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) in this order
 - follow the steps given in the oi4-oec-registry *Readme.md* file to prepare the repository for building
 - **When building on the development target**, use the ```yarn run docker:build:local``` command to build the container image. Tag it accordingly for the usage in the stack using [docker tag](https://docs.docker.com/engine/reference/commandline/tag/).
-- **When building on another platform for your development target**, identify the exact platform you are building for, e.g. by using ```uname -m``` in the shell of the development target. See the [official documentation](https://docs.docker.com/engine/reference/commandline/buildx_build/#platform) for more infos about the platforms for building. To build the image, you have to have docker installed on your machine. Using ```docker buildx build --load --platform linux/arm/v7 -t oi4-oec-registry:dev .``` you are building the current repository (".") for the arm 32 bit platform ("linux/arm/v7") and tagging the resulting image as "oi4-oec-registry:dev" whilst directly loading it into your local image store ("load"). You can now pack the image into a *.tar*-file using ```docker save -o [...]/oi4-oec-registry.tar oi4-oec-registry:dev``` where "[...]" is the filepath where you want the file to be stored. Transfer it to the development target, e.g. using *scp* and load it with ```docker load -i [...]/oi4-oec-registry.tar```. After loading the image check if the tag is correct with ```docker image ls```, the loaded image should appear as *oi4-oec-registry:dev*. If not, tag it accordingly using [docker tag](https://docs.docker.com/engine/reference/commandline/tag/).
-
-### Create the volumes for the containers
-
-To create the stack, some preparations have to be done. First, all the volumes for the containers have to be prepared beforehand. This can be easily done via the Portainer UI. Choose
-> *Volumes* -> *+ Add volume*
-
-and create the following volumes with the exact names:
-
-- *node-red-data*
-- *mosquitto-conf*
-- *mosquitto-data*
-- *mosquitto-logs*
+- **When building on another platform for your development target**, identify the exact platform you are building for, e.g. by using ```uname -m``` in the shell of the development target. See the [official documentation](https://docs.docker.com/engine/reference/commandline/buildx_build/#platform) for more infos about the platforms for building. To build the image, you have to have docker installed on your machine. Using ```docker buildx build --load --platform linux/arm/v7 -t oi4-oec-registry:dev .``` you are building the current repository (".") for the arm 32 bit platform ("linux/arm/v7") and tagging the resulting image as "oi4-oec-registry:dev" whilst directly loading it into your local image store ("load"). If you are building for another platform, change the identifier after the *--platform* parameter to your needs. You can now pack the image into a *.tar*-file using ```docker save -o [...]/oi4-oec-registry.tar oi4-oec-registry:dev``` where "[...]" is the filepath where you want the file to be stored. Transfer it to the development target, e.g. using *scp* and load it with ```docker load -i [...]/oi4-oec-registry.tar```. After loading the image check if the tag is correct with ```docker image ls```, the loaded image should appear as *oi4-oec-registry:dev*. If not, tag it accordingly using [docker tag](https://docs.docker.com/engine/reference/commandline/tag/).
 
 ### Start the Stack
 
@@ -104,4 +92,29 @@ in the Portainer UI and copy the contents of the *docker-compose.yml* file into 
 
 To start the stack. The missing images for mosquitto and node-red should be pulled automatically.
 
-### Senda data via the message bus
+### Configure mosquitto mqtt broker
+
+To use the broker in the stack, some default configuration have to be changed to the needs in this stack. Use the *Portainer* UI or ```sudo docker exec -it <container-id> sh``` from the development targets shell to start a terminal session inside the mosquitto container.
+
+Using [vi](https://www.cs.colostate.edu/helpdocs/vi.html), the following changes can be made in the */mosquitto/config/mosquitto.conf*-file by uncommenting the corresponding line and adding the missing parameters:
+
+>allow_anonymous true<br>
+>listener 1883 0.0.0.0<br>
+>persistence true<br>
+>persistence_location /mosquitto/data/<br>
+>log_dest file /mosquitto/log/mosquitto.log<br>
+
+If you want a slightly more secure development configuration, you can disable anonymous authentification and enable authentification via username/password:
+
+>password_file /mosquitto/passwd_file<br>
+>allow_anonymous false
+
+Using ```mosquitto_passwd -c /mosquitto/passwd_file <user_name>``` you can then set a password for the user *user_name*.
+
+After saving the editor, restart the container, e.g. using the *Portainer* ui.
+
+### Setup node-red flow
+
+
+
+### Send data via the message bus
