@@ -8,15 +8,15 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - mosquitto-conf:/mosquitto/config
-      - mosquitto-data:/mosquitto/data
-      - mosquitto-logs:/mosquitto/log
+      - /home/pi/oi4/mosquitto/config:/mosquitto/config
+      - /home/pi/oi4/mosquitto/data:/mosquitto/data
+      - /home/pi/oi4/mosquitto/log:/mosquitto/log
   
   node-red:
     image: nodered/node-red:3.0.2
     restart: unless-stopped
     environment:
-      - TZ=Europe/Amsterdam
+      - TZ=Europe/Berlin
     ports:
       - "1880:1880"
     volumes:
@@ -24,13 +24,19 @@ services:
       
   oi4-oec-registry:
     image: oi4/oi4-oec-registry:dev
+    restart: unless-stopped
+    environment:
+      - OI4_EDGE_LOG_LEVEL=warning
+      - OI4_EDGE_EVENT_LEVEL=warning
+      - TZ=Europe/Berlin
     ports:
       - "5798:5798"
+      - "5799:5799"
+    volumes:
+      - /home/pi/oi4/registry/mam.json:/etc/oi4/config/mam.json
+      - /home/pi/oi4/registry/mqtt:/etc/oi4/mqtt
+      - /home/pi/oi4/registry/secrets:/run/secrets
+     
   
 volumes:
   node-red-data:
-  mosquitto-conf:
-  mosquitto-data:
-  mosquitto-logs:
- 
-

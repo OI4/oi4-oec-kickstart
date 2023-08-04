@@ -1,0 +1,5 @@
+{
+    "address": "edgeiot-raspi",
+    "secure_port": 1883,
+    "max_packet_size": 262144
+  }

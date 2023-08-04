@@ -113,6 +113,9 @@ Using ```mosquitto_passwd -c /mosquitto/passwd_file <user_name>``` you can then 
 
 After saving the editor, restart the container, e.g. using the *Portainer* ui.
 
+### Configure registry
+Default user/pw in settings is user "oi4" with password "oi4-mqtt-pw" (without ""). If you want to change them, be aware that they have to be encoded in base64 in the *mqtt_credentials* file.
+
 ### Setup node-red flow
 
 To setup the example flow for node-red, get the flow from the [demo repository](https://github.com/OI4/oi4-oec-demo) by accessing *packages/oi4-oec-node-red-demo/src/* and copying the contents of the *flows.json* file. In the ui of the node-red instance on your developement target (port 1880) use
@@ -127,3 +130,6 @@ to load the flow into your node-red instance.
 
 ### Send data via the message bus
 
+To check that any data on the bus is accessible, you can subscribe 
+
+In the node-red web ui, open any tab and 
